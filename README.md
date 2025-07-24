@@ -331,6 +331,8 @@ const templateId = TEMPLATES[eventType] || TEMPLATE_SLIDE_ID;
 
 # 🏆 Certificate Generator with Google Apps Script
 
+<img width="352" height="137" alt="image" src="https://github.com/user-attachments/assets/6662a80f-eb0a-4209-bd21-3003d58e1414" />
+
 A web-based certificate generation system that automatically creates personalized certificates from Google Slides templates and exports them as PDFs. Users can enter their name to verify against a Google Sheets database and download their certificate instantly.
 
 ## ✨ Features
@@ -356,6 +358,8 @@ A web-based certificate generation system that automatically creates personalize
 ### 1. Setup Google Sheets
 
 Create a Google Sheets with the following structure:
+
+<img width="352" height="137" alt="image" src="https://github.com/user-attachments/assets/6662a80f-eb0a-4209-bd21-3003d58e1414" />
 
 | A (Email) | B (Full Name) |
 |-----------|---------------|
@@ -492,6 +496,8 @@ if (!email.endsWith('@yourcompany.com')) {
 ## 📊 Monitoring and Logs
 
 The system automatically creates a `DownloadLog` sheet with:
+
+<img width="791" height="470" alt="image" src="https://github.com/user-attachments/assets/b2bebf72-d629-403d-92d9-1c516d586437" />
 
 - **Date/Time**: When certificate was generated
 - **Full Name**: Participant name  
