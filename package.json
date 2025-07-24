@@ -1,0 +1,12 @@
+{
+  "name": "certificate_generator",
+  "version": "1.0.0",
+  "description": "institute certificate generator on google apps script",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "code.gs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

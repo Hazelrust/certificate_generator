@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเกียรติบัตรออนไลน์</title>
+    
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: clamp(20px, 5vw, 28px);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+        
+        .header p {
+            font-size: clamp(14px, 3.5vw, 16px);
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: clamp(13px, 3vw, 14px);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: clamp(14px, 3.5vw, 16px);
+            transition: border-color 0.3s ease;
+            min-height: 48px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group small {
+            color: #666;
+            font-size: clamp(11px, 2.5vw, 12px);
+            margin-top: 5px;
+            display: block;
+            line-height: 1.4;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: clamp(14px, 3.5vw, 16px);
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .certificate-section {
+            display: none;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+        
+        .certificate-preview {
+            background: white;
+            padding: 20px 15px;
+            border-radius: 8px;
+            border: 3px solid #daa520;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        
+        .cert-title {
+            font-size: clamp(20px, 5vw, 24px);
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cert-subtitle {
+            font-size: clamp(12px, 3vw, 14px);
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .cert-name {
+            font-size: clamp(22px, 6vw, 28px);
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+            text-align: center;
+            text-decoration: underline;
+            word-break: break-word;
+        }
+        
+        .cert-description {
+            font-size: clamp(14px, 3.5vw, 16px);
+            color: #333;
+            margin: 15px 0;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .cert-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .date {
+            font-size: clamp(10px, 2.5vw, 12px);
+            color: #666;
+        }
+        
+        .signature {
+            font-size: clamp(10px, 2.5vw, 12px);
+            color: #666;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .info-section {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-section h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: clamp(16px, 4vw, 18px);
+        }
+        
+        .info-section ul {
+            margin-left: 15px;
+            color: #333;
+            font-size: clamp(13px, 3vw, 14px);
+            line-height: 1.5;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive Design */
+        
+        /* Mobile phones (up to 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                border-radius: 10px;
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .certificate-preview {
+                padding: 15px 10px;
+            }
+            
+            .cert-footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .signature {
+                text-align: center;
+                max-width: 100%;
+            }
+            
+            .info-section ul {
+                margin-left: 10px;
+            }
+        }
+        
+        /* Tablets (481px to 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .header {
+                padding: 25px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+        }
+        
+        /* Small laptops (769px to 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 70%;
+            }
+        }
+        
+        /* Large screens (1025px and up) */
+        @media (min-width: 1025px) {
+            .container {
+                max-width: 600px;
+            }
+            
+            .header {
+                padding: 30px;
+            }
+            
+            .content {
+                padding: 40px;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn {
+                min-height: 50px;
+                font-size: 16px;
+            }
+            
+            .form-group input {
+                min-height: 50px;
+                font-size: 16px;
+            }
+            
+            .btn:hover {
+                transform: none;
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .certificate-preview {
+                border-width: 2px;
+            }
+        }
+        
+        /* Landscape orientation on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .cert-title {
+                font-size: 20px;
+            }
+            
+            .cert-name {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 ระบบเกียรติบัตรออนไลน์</h1>
+            <p>กรอกข้อมูลของคุณเพื่อรับเกียรติบัตร</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-section">
+                <h3>📋 วิธีการใช้งาน</h3>
+                <ul>
+                    <li>กรอกชื่อ-นามสกุลของคุณให้ตรงกับที่ลงทะเบียนไว้</li>
+                    <li>ตัวอย่าง: <strong>สมชาย ใจดี</strong> (มีช่องว่างระหว่างชื่อ-นามสกุล)</li>
+                    <li>กดปุ่ม "ตรวจสอบรายชื่อ" เพื่อยืนยัน</li>
+                    <li>หากพบรายชื่อ จะแสดงตัวอย่างเกียรติบัตร</li>
+                    <li>กดปุ่ม "สร้างเกียรติบัตร" เพื่อสร้างและดาวน์โหลด PDF</li>
+                </ul>
+            </div>
+            
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+            
+            <form id="nameForm">
+                <div class="form-group">
+                    <label for="fullName">ชื่อ-นามสกุล *</label>
+                    <input type="text" id="fullName" name="fullName" required 
+                           placeholder="เช่น สมชาย ใจดี" autocomplete="name">
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        💡 กรุณากรอกให้ตรงกับที่ลงทะเบียนไว้ และมีช่องว่างระหว่างชื่อ-นามสกุล
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn" id="checkBtn">
+                    🔍 ตรวจสอบรายชื่อ
+                </button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>กำลังตรวจสอบรายชื่อ...</p>
+            </div>
+            
+            <div class="certificate-section" id="certificateSection">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #333;">
+                    ✅ ตัวอย่างเกียรติบัตรของท่าน
+                </h3>
+                
+            <div class="certificate-preview" id="certificatePreview">
+                <!-- แสดงภาพจริงจาก Google Slides -->
+                <div id="realPreview" style="display: none; text-align: center;">
+                    <h4 style="margin-bottom: 15px; color: #333;">🎨 ตัวอย่างเกียรติบัตรจริง</h4>
+                    <img id="slideThumbnail" src="" alt="ตัวอย่างเกียรติบัตร" 
+                        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                        ชื่อของคุณจะปรากฏแทนที่ <<ชื่อสกุล>> ในเกียรติบัตรจริง
+                    </p>
+                </div>
+                
+                <!-- Fallback preview (แสดงเมื่อโหลดภาพไม่ได้) -->
+                <div id="fallbackPreview">
+                    <div class="cert-title">เกียรติบัตร</div>
+                    <div class="cert-subtitle">Certificate of Achievement</div>
+                    <div class="cert-description">ขอแสดงความยินดีและมอบเกียรติบัตรนี้แก่</div>
+                    <div class="cert-name" id="displayName">-</div>
+                    <div class="cert-description">
+                        ที่ได้เข้าร่วม<br>
+                        <strong id="displayEvent">-</strong><br>
+                        เป็นที่เรียบร้อยแล้ว
+                    </div>
+                    <div class="cert-footer">
+                        <div class="date">วันที่: <span id="currentDate"></span></div>
+                        <div class="signature">
+                            ________________________<br>
+                            <span id="displayOrg">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <p style="margin: 0; color: #856404; text-align: center;">
+                        🎨 <strong>หมายเหตุ:</strong> รูปแบบนี้เป็นเพียงตัวอย่าง เกียรติบัตรจริง
+                    </p>
+                </div>
+                
+                <button type="button" class="btn" onclick="generateCertificate()" id="generateBtn">
+                    🎨 สร้างเกียรติบัตรจาก Template
+                </button>
+                
+                <!-- Download section (ซ่อนไว้) -->
+                <div id="downloadSection" style="display: none; margin-top: 20px; text-align: center;">
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px;">
+                        <h4 style="color: #155724; margin: 0 0 15px 0;">✅ สร้างเกียรติบัตรสำเร็จ!</h4>
+                        <p style="margin: 10px 0; color: #155724;">เกียรติบัตรของคุณพร้อมแล้ว</p>
+                        <a id="downloadLink" href="#" target="_blank" class="btn" style="text-decoration: none; display: inline-block;">
+                            📄 ดาวน์โหลดเกียรติบัตร PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userData = null;
+        
+        // Set current date in Thai format
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('th-TH');
+        
+        // Form submission handler
+        document.getElementById('nameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkNameInSheet();
+        });
+        
+        function showAlert(message, type = 'error') {
+            const alertElement = document.getElementById(type === 'error' ? 'errorAlert' : 'successAlert');
+            const otherAlert = document.getElementById(type === 'error' ? 'successAlert' : 'errorAlert');
+            
+            // Hide other alert
+            otherAlert.style.display = 'none';
+            
+            // Show current alert
+            alertElement.textContent = message;
+            alertElement.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('checkBtn').disabled = show;
+            
+            if (show) {
+                document.getElementById('certificateSection').style.display = 'none';
+            }
+        }
+        
+        function checkNameInSheet() {
+            const fullName = document.getElementById('fullName').value.trim();
+            
+            if (!fullName) {
+                showAlert('กรุณากรอกชื่อ-นามสกุล');
+                return;
+            }
+            
+            // ตรวจสอบว่ามีช่องว่างหรือไม่
+            if (!fullName.includes(' ')) {
+                showAlert('กรุณากรอกชื่อ-นามสกุลให้สมบูรณ์ โดยมีช่องว่างคั่นระหว่างชื่อและนามสกุล เช่น "สมชาย ใจดี"');
+                return;
+            }
+            
+            showLoading(true);
+            
+            // Call Google Apps Script function
+            google.script.run
+                .withSuccessHandler(handleCheckNameSuccess)
+                .withFailureHandler(handleCheckNameError)
+                .checkName(fullName);
+        }
+        
+        function handleCheckNameSuccess(result) {
+            showLoading(false);
+            
+            if (result.success) {
+                userData = result.data;
+                showAlert(result.message, 'success');
+                displayCertificate();
+            } else {
+                showAlert(result.message);
+            }
+        }
+        
+        function handleCheckNameError(error) {
+            showLoading(false);
+            showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message);
+        }
+        
+function displayCertificate() {
+    if (!userData) return;
+    
+    // Update fallback preview
+    document.getElementById('displayName').textContent = userData.fullName;
+    // document.getElementById('displayEvent').textContent = userData.eventName;
+    // document.getElementById('displayOrg').textContent = userData.organization;
+    
+    // โหลดภาพตัวอย่างจริง
+    google.script.run
+        .withSuccessHandler(handleThumbnailSuccess)
+        .withFailureHandler(handleThumbnailError)
+        .getSlideThumbnail();
+    
+    // Show certificate section
+    document.getElementById('certificateSection').style.display = 'block';
+    document.getElementById('certificateSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function handleThumbnailSuccess(result) {
+    if (result.success) {
+        // แสดงภาพจริง
+        document.getElementById('slideThumbnail').src = result.thumbnailUrl;
+        document.getElementById('realPreview').style.display = 'block';
+        document.getElementById('fallbackPreview').style.display = 'none';
+    } else {
+        // แสดง fallback
+        document.getElementById('realPreview').style.display = 'none';
+        document.getElementById('fallbackPreview').style.display = 'block';
+    }
+}
+
+function handleThumbnailError(error) {
+    // แสดง fallback เมื่อเกิดข้อผิดพลาด
+    document.getElementById('realPreview').style.display = 'none';
+    document.getElementById('fallbackPreview').style.display = 'block';
+}
+        
+        function generateCertificate() {
+            if (!userData) {
+                showAlert('ไม่พบข้อมูลเกียรติบัตร');
+                return;
+            }
+            
+            // แสดง loading state
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.textContent;
+            generateBtn.textContent = '⏳ กำลังสร้างเกียรติบัตร...';
+            generateBtn.disabled = true;
+            
+            // ซ่อน download section
+            document.getElementById('downloadSection').style.display = 'none';
+            
+            // เรียกใช้ Google Apps Script function
+            google.script.run
+                .withSuccessHandler(handleGenerateSuccess)
+                .withFailureHandler(handleGenerateError)
+                .generateCertificateFromSlides(userData);
+                
+            function handleGenerateSuccess(result) {
+                generateBtn.textContent = originalText;
+                generateBtn.disabled = false;
+                
+                if (result.success) {
+                    // แสดง download link
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = result.downloadUrl;
+                    document.getElementById('downloadSection').style.display = 'block';
+                    
+                    // บันทึก log
+                    google.script.run.logDownload(userData.fullName, userData.email, result.fileId);
+                    
+                    showAlert('สร้างเกียรติบัตรสำเร็จ! คลิกปุ่มด้านล่างเพื่อดาวน์โหลด', 'success');
+                    
+                    // เลื่อนไปที่ download section
+                    document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showAlert(result.message);
+                }
+            }
+            
+            function handleGenerateError(error) {
+                generateBtn.textContent = originalText;
+                generateBtn.disabled = false;
+                showAlert('เกิดข้อผิดพลาดในการสร้างเกียรติบัตร: ' + error.message);
+            }
+        }
+        
+        // เก็บฟังก์ชัน downloadPDF เดิมไว้เป็น fallback
+        function downloadPDF() {
+            if (!userData) {
+                showAlert('ไม่พบข้อมูลเกียรติบัตร');
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape
+                
+                // Add border
+                pdf.setLineWidth(3);
+                pdf.rect(10, 10, 277, 190);
+                pdf.setLineWidth(1);
+                pdf.rect(15, 15, 267, 180);
+                
+                // Title
+                pdf.setFontSize(28);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('CERTIFICATE', 148.5, 50, { align: 'center' });
+                
+                pdf.setFontSize(20);
+                pdf.text('เกียรติบัตร', 148.5, 60, { align: 'center' });
+                
+                // Subtitle
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('Certificate of Achievement', 148.5, 70, { align: 'center' });
+                
+                // Description
+                pdf.setFontSize(16);
+                pdf.text('ขอแสดงความยินดีและมอบเกียรติบัตรนี้แก่', 148.5, 90, { align: 'center' });
+                
+                // Name
+                pdf.setFontSize(24);
+                pdf.setFont('helvetica', 'bold');
+                const fullName = userData.fullName;
+                pdf.text(fullName, 148.5, 110, { align: 'center' });
+                
+                // Draw line under name
+                const nameWidth = pdf.getTextWidth(fullName);
+                const startX = 148.5 - (nameWidth / 2) - 10;
+                const endX = 148.5 + (nameWidth / 2) + 10;
+                pdf.line(startX, 115, endX, 115);
+                
+                // Course description
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('ที่ได้เข้าร่วม', 148.5, 130, { align: 'center' });
+                pdf.text(userData.eventName, 148.5, 145, { align: 'center' });
+                pdf.text('เป็นที่เรียบร้อยแล้ว', 148.5, 160, { align: 'center' });
+                
+                // Footer
+                pdf.setFontSize(12);
+                const currentDate = new Date().toLocaleDateString('th-TH');
+                pdf.text(`วันที่: ${currentDate}`, 30, 180);
+                
+                // Signature
+                pdf.text('________________________', 220, 175);
+                pdf.text(userData.organization, 230, 185, { align: 'center' });
+                
+                // Save PDF
+                const fileName = `เกียรติบัตร_${userData.fullName.replace(/\s+/g, '_')}.pdf`;
+                pdf.save(fileName);
+                
+                // Log download
+                google.script.run.logDownload(userData.fullName, userData.email);
+                
+                showAlert('ดาวน์โหลดเกียรติบัตรสำเร็จ!', 'success');
+                
+            } catch (error) {
+                showAlert('เกิดข้อผิดพลาดในการสร้าง PDF: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
