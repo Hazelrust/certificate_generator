@@ -43,6 +43,8 @@
 
 ### 2. สร้าง Template เกียรติบัตร
 
+<img width="941" height="678" alt="image" src="https://github.com/user-attachments/assets/7d555816-07b6-4331-a3c9-654aa2df2a73" />
+
 1. สร้าง Google Slides ใหม่
 2. ออกแบบเกียรติบัตรตามต้องการ
 3. ใส่ตัวแปรในตำแหน่งที่ต้องการให้เปลี่ยนแปลง:
@@ -370,6 +372,8 @@ Create a Google Sheets with the following structure:
 **Important**: Names in column B must have spaces between first and last names.
 
 ### 2. Create Certificate Template
+
+<img width="941" height="678" alt="image" src="https://github.com/user-attachments/assets/2517b2dc-d917-42d8-8c5b-c23e23d80c71" />
 
 1. Create a new Google Slides presentation
 2. Design your certificate template
