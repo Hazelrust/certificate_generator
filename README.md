@@ -46,19 +46,19 @@
 <img width="941" height="678" alt="image" src="https://github.com/user-attachments/assets/7d555816-07b6-4331-a3c9-654aa2df2a73" />
 
 1. สร้าง Google Slides ใหม่
-2. ออกแบบเกียรติบัตรตามต้องการ
+2. ออกแบบเกียรติบัตรตามต้องการ (แนะนำให้ทำจาก canva แล้วเอาภาพมาแปะก่อนจะดีที่สุด)
 3. ใส่ตัวแปรในตำแหน่งที่ต้องการให้เปลี่ยนแปลง:
    - `<<ชื่อสกุล>>` หรือ `{{NAME}}` - จะถูกแทนที่ด้วยชื่อผู้เข้าร่วม
-   - `{{EVENT}}` - จะถูกแทนที่ด้วยชื่อกิจกรรม (ไม่บังคับ)
-   - `{{DATE}}` - จะถูกแทนที่ด้วยวันที่ปัจจุบัน (ไม่บังคับ)
-   - `{{ORGANIZATION}}` - จะถูกแทนที่ด้วยชื่อหน่วยงาน (ไม่บังคับ)
+   - `{{EVENT}}` - จะถูกแทนที่ด้วยชื่อกิจกรรม (ใส่เพิ่มเติมเองได้)
+   - `{{DATE}}` - จะถูกแทนที่ด้วยวันที่ปัจจุบัน (ใส่เพิ่มเติมเองได้)
+   - `{{ORGANIZATION}}` - จะถูกแทนที่ด้วยชื่อหน่วยงาน (ใส่เพิ่มเติมเองได้)
 
 ### 3. ตั้งค่า Google Apps Script
 
 1. เปิด Google Sheets ที่สร้างไว้
 2. ไปที่ **ส่วนขยาย** → **Apps Script**
 3. ลบโค้ดเดิมในไฟล์ `Code.gs`
-4. Copy โค้ดจากไฟล์ [`Code.gs`](./Code.gs) มาแทน
+4. Copy โค้ดจากไฟล์ [`Code.js`](./Code.js) มาแทน
 5. สร้างไฟล์ HTML ใหม่: **ไฟล์** → **ใหม่** → **ไฟล์ HTML**
 6. ตั้งชื่อไฟล์ว่า `Index`
 7. Copy โค้ดจากไฟล์ [`Index.html`](./Index.html) มาแทน
@@ -111,10 +111,10 @@ Copy ส่วน `FOLDER_ID`
 ### 7. Deploy Web App
 
 1. คลิก **Deploy** → **การใช้งานใหม่**
-2. ประเภท: **เว็บแอป**
+2. ประเภท: **web app**
 3. คำอธิบาย: `ระบบสร้างเกียรติบัตร`
-4. ดำเนินการเป็น: **ฉัน**
-5. ผู้ที่มีสิทธิ์เข้าถึง: **ทุกคน** (สำหรับการเข้าถึงสาธารณะ)
+4. ดำเนินการเป็น: **Me**
+5. ผู้ที่มีสิทธิ์เข้าถึง: **Anyone** (สำหรับการเข้าถึงสาธารณะ)
 6. คลิก **Deploy**
 7. **Copy URL ของ web app**
 
@@ -388,7 +388,7 @@ Create a Google Sheets with the following structure:
 1. Open your Google Sheets
 2. Go to **Extensions** → **Apps Script**
 3. Delete existing code in `Code.gs`
-4. Copy and paste the code from [`Code.gs`](./Code.gs)
+4. Copy and paste the code from [`Code.js`](./Code.js)
 5. Create a new HTML file: **File** → **New** → **HTML file**
 6. Name it `Index`
 7. Copy and paste the code from [`Index.html`](./Index.html)
